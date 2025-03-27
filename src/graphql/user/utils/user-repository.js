@@ -1,68 +1,89 @@
-import { ValidationError } from 'apollo-server';
+import { ValidationError } from "apollo-server";
 
 export const createUserFn = async (userData, datasource) => {
-  const userInfo = await createUserInfo(userData, datasource);
-  const { firstName, lastName, userName } = userInfo;
+  checkUserFields(userData, true);
 
-  if (!firstName || !lastName || !userName) {
-    throw new ValidationError('All fields are required');
-  }
-
-  return await datasource.post('', { ...userInfo });
-};
-
-export const updateUserFn = async (userId, userData, datasource) => {
-  // verificar se o userId foi passado
-  if (!userId) {
-    throw new ValidationError('UserID is required');
-  }
-
-  const { firstName, lastName, userName } = userData;
-
-  if (
-    (typeof firstName !== 'undefined' && !firstName) ||
-    (typeof lastName !== 'undefined' && !lastName) ||
-    (typeof userName !== 'undefined' && !userName)
-  ) {
-    throw new ValidationError('Missing data. Review your information');
-  }
-
-  await userExists(userId, datasource);
-
-  return await datasource.patch(userId, { ...userData });
-};
-
-export const deleteUserFn = async (userId, datasource) => {
-  await userExists(userId, datasource);
-  const deleted = await datasource.delete(userId);
-  return !!deleted;
-};
-
-const userExists = async (userId, datasource) => {
-  console.log('userExists', userId);
-  try {
-    await datasource.context.dataSources.usersApi.get(`${userId}`);
-  } catch (e) {
-    throw new ValidationError(`User ${userId} does not exists`);
-  }
-};
-
-const createUserInfo = async (userData, datasource) => {
-  const { firstName, lastName, userName } = userData;
-
-  const indexRefUser = await datasource.get('', {
+  const indexRefUser = await datasource.get("", {
     _limit: 1,
-    _sort: 'indexRef',
-    _order: 'desc',
+    _sort: "indexRef",
+    _order: "desc",
   });
 
   const indexRef = indexRefUser[0].indexRef + 1;
 
-  return {
-    firstName,
-    lastName,
-    userName,
+  const foundUser = await userExists(userData.userName, datasource);
+
+  if (typeof foundUser !== "undefined") {
+    throw new ValidationError(
+      `userName ${userData.userName} has already been taken`
+    );
+  }
+
+  return datasource.post("", {
+    ...userData,
     indexRef,
     createdAt: new Date().toISOString(),
-  };
+  });
+};
+
+export const updateUserFn = async (userId, userData, datasource) => {
+  checkUserFields(userData, false);
+
+  if (!userId) throw new ValidationError(`Missing userId`);
+
+  if (userData.userName) {
+    const foundUser = await userExists(userData.userName, datasource);
+
+    if (typeof foundUser !== "undefined" && foundUser.id !== userId) {
+      throw new ValidationError(
+        `userName ${userData.userName} has already been taken`
+      );
+    }
+  }
+
+  return datasource.patch(userId, {
+    ...userData,
+  });
+};
+
+export const deleteUserFn = async (userId, datasource) => {
+  if (!userId) throw new ValidationError(`Missing userId`);
+
+  return !!(await datasource.delete(userId));
+};
+
+const userExists = async (userName, datasource) => {
+  // /users/?userName=nomeBuscado
+  const found = await datasource.get("", {
+    userName,
+  });
+  return found[0];
+};
+
+const checkUserFields = (user, AllFieldsRequired = false) => {
+  const userFields = ["firstName", "lastName", "userName"];
+
+  for (const field of userFields) {
+    if (!AllFieldsRequired) {
+      if (typeof user[field] === "undefined") {
+        continue;
+      }
+    }
+
+    if (field === "userName") {
+      validateUserName(user[field]);
+    }
+
+    if (!user[field]) {
+      throw new Error(`Missing ${field}`);
+    }
+  }
+};
+
+const validateUserName = (userName) => {
+  const userNameRegExp = /^[a-z]([a-z0-9_.-]+)+$/gi;
+
+  if (!userName.match(userNameRegExp)) {
+    throw new ValidationError(`userName must match ${userNameRegExp}`);
+  }
 };
