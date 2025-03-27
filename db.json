@@ -163,10 +163,19 @@
     {
       "firstName": "Fulano",
       "lastName": "Silva",
-      "userName": "fulano.silva",
+      "userName": "ATUALIZADO_fulano.silva-1",
       "indexRef": 21,
       "createdAt": "2025-03-26T14:13:34.081Z",
       "id": "m5H2vmR"
+    },
+    {
+      "firstName": "Beltrano",
+      "lastName": "Costa",
+      "userName": "bel.costa",
+      "passwordHash": "$2b$12$Y4Ux0OYELVdPikYg1qYo6OsNIXIOKPCr7sFP0WqQnFAcZmRpq8uJy",
+      "indexRef": 22,
+      "createdAt": "2025-03-27T12:06:02.902Z",
+      "id": "7fai765"
     }
   ],
   "posts": [
@@ -361,6 +370,14 @@
       "userId": "502",
       "indexRef": 19,
       "createdAt": "2017-04-26T19:39:05.420Z"
+    },
+    {
+      "title": "Post de Fulano",
+      "body": "Corpo do post",
+      "userId": "m5H2vmR",
+      "indexRef": 25,
+      "createdAt": "2025-03-27T00:08:38.580Z",
+      "id": "kICk_ik"
     }
   ],
   "comments": [

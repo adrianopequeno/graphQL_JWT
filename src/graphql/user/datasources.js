@@ -29,7 +29,7 @@ export class UsersApi extends RESTDataSource {
   }
 
   async createUser(userData) {
-    console.log(this);
+    // console.log(this);
     return createUserFn(userData, this);
   }
 

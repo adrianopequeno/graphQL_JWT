@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from "apollo-server";
 /*
   {
     "id": "602",
@@ -35,11 +35,13 @@ export const userTypesDefs = gql`
     firstName: String!
     lastName: String!
     userName: String!
+    password: String!
   }
 
   input UpdateUserInput {
     firstName: String
     lastName: String
     userName: String
+    password: String
   }
 `;
