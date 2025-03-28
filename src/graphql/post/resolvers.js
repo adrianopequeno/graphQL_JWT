@@ -1,5 +1,6 @@
 // Querys Resolvers
-const posts = async (_, { input }, { dataSources }) => {
+const posts = async (_, { input }, { dataSources, loggedUserId }) => {
+  console.log(loggedUserId);
   const posts = await dataSources.postsApi.getPosts(input);
   return posts;
 };
