@@ -1,4 +1,4 @@
-import { checkOwner } from "./utils/auth-functions.js";
+import { checkOwner } from "../login/utils/login-functions.js";
 
 // Querys Resolvers
 const users = async (_, { input }, { dataSources }) => {
