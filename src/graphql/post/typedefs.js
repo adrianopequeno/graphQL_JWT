@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from "apollo-server";
 
 /* {
   "id": "860",
@@ -34,7 +34,7 @@ export const postTypeDefs = gql`
   input CreatePostInput {
     title: String!
     body: String!
-    userId: String!
+    # userId: String!
   }
 
   input UpdatePostInput {
