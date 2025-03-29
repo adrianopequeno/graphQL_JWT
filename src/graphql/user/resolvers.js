@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server";
+import { checkOwner } from "./utils/auth-functions.js";
 
 // Querys Resolvers
 const users = async (_, { input }, { dataSources }) => {
@@ -21,16 +21,12 @@ const updateUser = async (
   { userId, data },
   { dataSources, loggedUserId }
 ) => {
-  if (!loggedUserId) {
-    throw new AuthenticationError("You have to log in!");
-  }
-  if (loggedUserId !== userId) {
-    throw new AuthenticationError("You can only update your own account!");
-  }
+  checkOwner(userId, loggedUserId);
   return dataSources.usersApi.updateUser(userId, data);
 };
 
-const deleteUser = async (_, { userId }, { dataSources }) => {
+const deleteUser = async (_, { userId }, { dataSources, loggedUserId }) => {
+  checkOwner(userId, loggedUserId);
   return dataSources.usersApi.deleteUser(userId);
 };
 
