@@ -23,7 +23,12 @@ const createPost = async (_, { data }, { dataSources, loggedUserId }) => {
   return await dataSources.postsApi.createPost(data);
 };
 
-const updatePost = async (_, { postId, data }, { dataSources }) => {
+const updatePost = async (
+  _,
+  { postId, data },
+  { dataSources, loggedUserId }
+) => {
+  checkIsLoggedIn(loggedUserId);
   return dataSources.postsApi.updatePost(postId, data);
 };
 
